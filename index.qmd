@@ -1,0 +1,315 @@
+---
+title: "Programa de Prevención & Control del Dengue | 19 Nuevo León 2024"
+format: 
+  dashboard:
+      scrolling: true
+      logo: https://www.gob.mx/cms/uploads/action_program/main_image/26942/post_post_portadavectores.gif
+      nav-buttons: [twitter, github, facebook]
+theme: custom.scss
+execute:
+  freeze: auto
+---
+
+
+```{r setup}
+library(sf)
+library(magrittr)
+mapview::mapviewOptions(default = TRUE,
+                        basemaps.color.shuffle = FALSE)
+load("/Users/felipedzul/Library/CloudStorage/OneDrive-Personal/proyects/geocoding_mex/2024/8.RData/denmex_2024.RData")
+```
+
+
+# [**Escenarios Epidemiológicos**]{style="font-size:8pt"}
+
+
+::: panel-tabset
+
+### [**Panorama Epidemiológico**]{style="color:#990000"}
+
+<html>
+<head>
+<style>
+</style>
+</head>
+<body>
+<div >
+  <h2></h2>
+  <p></p>
+
+<div style = "display: grid; width: 1px; grid-template-columns: 550px 550px; align-items: start; justify-content: space-between;">
+
+#### **<span style="color:blue"> Treemap Nacional </span>**
+```{r treemap_national, out.width="100%", out.height="100%"}
+path_sinave <- "/Users/felipedzul/Library/CloudStorage/OneDrive-Personal/datasets/DGE/denv/2024/DENGUE2_.txt"
+x <- data.table::fread(path_sinave,
+                       #select = vect_cols2,
+                       encoding = "Latin-1",
+                       quote="",
+                       fill=TRUE)
+
+densnv::mp_treemap(country = TRUE,
+                   snv_dataset = x)
+```
+
+<div>
+
+#### **<span style="color:blue"> Treemap Estatal </span>**
+```{r treemap_estatal,out.width="100%", out.height="100%"}
+path_sinave <- "/Users/felipedzul/Library/CloudStorage/OneDrive-Personal/datasets/DGE/denv/2024/DENGUE2_.txt"
+x <- data.table::fread(path_sinave,
+                       #select = vect_cols2,
+                       encoding = "Latin-1",
+                       quote="",
+                       fill=TRUE)
+densnv::mp_treemap(country = FALSE,
+                   cve_edo = "19",
+                   snv_dataset = x)
+```
+</div>
+
+</div>
+
+</div>
+
+</body>
+</html>
+
+:::
+
+
+
+# [**Escenarios Epidemiológicos**]{style="font-size:8pt"}
+
+::: panel-tabset
+
+### [**Área Metropolitana de Monterrey**]{style="color:#990000"}
+
+<html>
+<head>
+```{=html}
+<style>
+.grid-container {
+  display: grid;
+  grid-template-columns: auto auto auto;
+  padding: 5px;
+}
+
+.grid-item {
+  background-color: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(0, 0, 0, 0.8);
+  padding: 5px;
+  font-size: 15px;
+  text-align-last: center;
+  text-align: center;
+}
+</style>
+```
+</head>
+<body>
+<h1>
+</h1>
+<p>
+</p>
+
+::: grid-container
+
+::: grid-item
+Acumulado
+:::
+
+
+::: grid-item
+Últimas 3 Semanas
+:::
+
+
+::: grid-item
+```{r monterrey_heatmap_acumulado}
+#| echo: false
+#| output: true
+load("/Users/felipedzul/Library/CloudStorage/OneDrive-Personal/proyects/geocoding_mex/2024/8.RData/denmex_2024.RData")
+
+densnv::mp_heatmap(geocoded_datasets = z,
+                   cve_edo = "19",
+                   locality =  c("Monterrey", "Guadalupe",
+                                "Ciudad General Escobedo", "CiudadApodaca",
+                                "Ciudad Santa Catarina", "Benito Juarez",
+                                "San Pedro Garza Garcia",
+                                "San Nicolas de los Garza",
+                                "Santiago", "Arboledad San Roque",
+                                "Jardines de la Silla (Jardines)"),
+                   status_caso = 2,
+                   week = seq(from = 1, 
+                              to = lubridate::epiweek(Sys.Date()),
+                              by = 1),
+                   zoom = NULL,
+                   map_type = NULL,
+                   alpha = 0.6,
+                   static = FALSE,
+                   palette = viridis::turbo)
+```
+:::
+
+
+::: grid-item
+
+```{r monterrey_heatmap_2week}
+#| echo: false
+#| output: true
+load("/Users/felipedzul/Library/CloudStorage/OneDrive-Personal/proyects/geocoding_mex/2024/8.RData/denmex_2024.RData")
+
+densnv::mp_heatmap(geocoded_datasets = z,
+                   cve_edo = "19",
+                   locality = c("Monterrey", "Guadalupe",
+                                "Ciudad General Escobedo", "CiudadApodaca",
+                                "Ciudad Santa Catarina", "Benito Juarez",
+                                "San Pedro Garza Garcia",
+                                "San Nicolas de los Garza",
+                                "Santiago", "Arboledad San Roque",
+                                "Jardines de la Silla (Jardines)"),
+                   status_caso =  2,
+                   week = seq(from = lubridate::epiweek(Sys.Date())-3, 
+                              to = lubridate::epiweek(Sys.Date()),
+                              by = 1),
+                   zoom = NULL,
+                   map_type = NULL,
+                   alpha = 0.6,
+                   static = FALSE,
+                   palette = viridis::turbo)
+
+```
+
+:::
+
+
+::: grid-item
+
+```{r monterrey_knox_acumulado}
+load("/Users/felipedzul/Library/CloudStorage/OneDrive-Personal/proyects/geocoding_mex/2024/8.RData/denmex_2024.RData")
+
+denhotspots::transmission_chains_map(geocoded_dataset = z,
+                                     cve_edo = "19",
+                                     locality =  c("Monterrey", "Guadalupe",
+                                                   "Ciudad General Escobedo","CiudadApodaca",
+                                                   "Ciudad Santa Catarina", "Benito Juarez",
+                                "San Pedro Garza Garcia",
+                                "San Nicolas de los Garza",
+                                "Santiago", "Arboledad San Roque",
+                                "Jardines de la Silla (Jardines)"),
+                                     dengue_cases = "Confirmado")
+
+
+```
+
+:::
+
+
+::: grid-item
+
+```{r monterrey_knox_ultimas_dos_semanas}
+load("/Users/felipedzul/Library/CloudStorage/OneDrive-Personal/proyects/geocoding_mex/2024/8.RData/denmex_2024.RData")
+z <- z |>
+  dplyr::filter(SEM %in% c(seq(from = lubridate::epiweek(Sys.Date())-3, 
+                              to = lubridate::epiweek(Sys.Date()),
+                              by = 1)))
+
+denhotspots::transmission_chains_map(geocoded_dataset = z,
+                                     cve_edo = "19",
+                                     locality =  c("Monterrey", "Guadalupe",
+                                "Ciudad General Escobedo", "CiudadApodaca",
+                                "Ciudad Santa Catarina", "Benito Juarez",
+                                "San Pedro Garza Garcia",
+                                "San Nicolas de los Garza",
+                                "Santiago", "Arboledad San Roque",
+                                "Jardines de la Silla (Jardines)"),
+                                     dengue_cases = c("Confirmado"))
+
+
+```
+:::
+
+
+::: grid-item
+```{r lgcp_monterrey_acumulado}
+load("/Users/felipedzul/Library/CloudStorage/OneDrive-Personal/proyects/geocoding_mex/2024/8.RData/denmex_2024.RData")
+# Step 2. set the onset variable
+z_acum <- z |>
+    dplyr::mutate(onset = lubridate::ymd(FEC_INI_SIGNOS_SINT)) |>
+    dplyr::filter(ESTATUS_CASO %in% c( 2))  |>
+    dplyr::mutate(x = long, y = lat)
+lgcp_acum <- denhotspots::spatial_lgcp(dataset = z_acum,
+                                     locality =  c("Monterrey", "Guadalupe",
+                                "Ciudad General Escobedo", "CiudadApodaca",
+                                "Ciudad Santa Catarina", "Benito Juarez",
+                                "San Pedro Garza Garcia",
+                                "San Nicolas de los Garza",
+                                "Santiago", "Arboledad San Roque",
+                                "Jardines de la Silla (Jardines)"),
+                                     cve_edo = "19",
+                                     longitude = "long",
+                                     latitude = "lat",
+                                     k = 40,
+                                     plot = FALSE,
+                                     aproximation = "gaussian",
+                                     integration = "eb",
+                                     resolution = 0.025,  # 2.7km
+                                     approach = "lattice",
+                                     cell_size = 1000,
+                                     name = "YlGnBu")
+
+#lattice$gg_mesh
+lgcp_acum$map
+```
+
+:::
+
+
+
+::: grid-item
+```{r lgcp_monterrey_3week}
+
+load("/Users/felipedzul/Library/CloudStorage/OneDrive-Personal/proyects/geocoding_mex/2024/8.RData/denmex_2024.RData")
+
+z_3week <- z |>
+    dplyr::mutate(onset = lubridate::ymd(FEC_INI_SIGNOS_SINT)) |>
+    dplyr::filter(ESTATUS_CASO %in% c( 2))  |>
+    dplyr::mutate(x = long, y = lat) |>
+    dplyr::filter(SEM %in% c(seq(from = lubridate::epiweek(Sys.Date())-3, 
+                                 to = lubridate::epiweek(Sys.Date()),
+                                 by = 1)))
+
+
+lgcp_3week <- denhotspots::spatial_lgcp(dataset = z_3week,
+                                        locality =  c("Monterrey", "Guadalupe",
+                                "Ciudad General Escobedo", "CiudadApodaca",
+                                "Ciudad Santa Catarina", "Benito Juarez",
+                                "San Pedro Garza Garcia",
+                                "San Nicolas de los Garza",
+                                "Santiago", "Arboledad San Roque",
+                                "Jardines de la Silla (Jardines)"),
+                                        cve_edo = "19",
+                                        longitude = "long",
+                                        latitude = "lat",
+                                        k = 40,
+                                        plot = FALSE,
+                                        aproximation = "gaussian",
+                                        integration = "eb",
+                                        resolution = 0.025,  # 2.7km
+                                        approach = "lattice",
+                                        cell_size = 1000,
+                                        name = "YlGnBu")
+lgcp_3week$map
+```
+
+:::
+
+
+
+:::
+
+</body>
+</html>
+
+
+:::
